@@ -1,19 +1,3 @@
-# music-records-vue
+## Author
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+This is a personal project of mine, consuming data from an API using Vue with TypeScript. The idea of ​​the project itself is irrelevant, I did to improve my knowledge in Vue with TypeScript and API consumption.
