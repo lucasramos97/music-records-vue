@@ -13,6 +13,8 @@ import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 
 import router from './router';
 import App from './App.vue';
@@ -28,5 +30,7 @@ app.component('InputText', InputText);
 app.component('Password', Password);
 app.component('Button', Button);
 app.component('Dialog', Dialog);
+app.component('DataTable', DataTable);
+app.component('Column', Column);
 
 app.mount('#app');

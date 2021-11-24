@@ -12,3 +12,23 @@ export interface IAuthenticable {
 export interface IUser extends ILogin {
   username: string;
 }
+
+export interface IMusic {
+  id?: number;
+  title: string;
+  artist: string;
+  release_date: string;
+  duration: string;
+  number_views?: number;
+  feat?: boolean;
+}
+
+export interface IPagedMusics {
+  content: IMusic[];
+  total: number;
+}
+
+export interface ILazyParams {
+  page: number;
+  rows: number;
+}
