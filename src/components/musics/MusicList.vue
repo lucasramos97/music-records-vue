@@ -1,5 +1,6 @@
 <template>
   <Toast />
+  <LoggedUser />
   <h1>Music List</h1>
   <DataTable
     :value="musics"
@@ -42,6 +43,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { AxiosError } from 'axios';
+
+import LoggedUser from '@/components/utils/LoggedUser.vue';
 
 import { ILazyParams, IMusic } from '@/interfaces/all';
 import MusicService from '@/services/MusicService';
@@ -109,6 +112,9 @@ export default defineComponent({
     formatFeat(feat: boolean): string {
       return feat ? 'Yes' : 'No';
     },
+  },
+  components: {
+    LoggedUser,
   },
 });
 </script>
