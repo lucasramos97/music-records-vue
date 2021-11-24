@@ -47,7 +47,9 @@
         </div>
 
         <div className="p-field p-col-11" style="margin-left: 1rem">
-          <a href="#" class="link">Don't have a user yet?</a>
+          <a href="#" @click="openCreateUser()" class="link">
+            Don't have a user yet?
+          </a>
         </div>
 
         <div class="p-field p-col-4 p-md-4" style="margin-left: 1rem">
@@ -67,11 +69,15 @@
       </div>
     </div>
   </div>
+
+  <CreateUser v-model:visible="visibleCreateUser" />
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { AxiosError } from 'axios';
+
+import CreateUser from './CreateUser.vue';
 
 import { ILogin } from '@/interfaces/all';
 import AuthenticationService from '@/services/AuthenticationService';
@@ -83,6 +89,13 @@ const authenticationService = new AuthenticationService();
 const userService = new UserService();
 
 export default defineComponent({
+  setup() {
+    let visibleCreateUser = ref(false);
+
+    return {
+      visibleCreateUser,
+    };
+  },
   data() {
     return {
       login: {
@@ -94,6 +107,10 @@ export default defineComponent({
     };
   },
   methods: {
+    openCreateUser() {
+      this.visibleCreateUser = true;
+    },
+
     validLogin(): boolean {
       const allRequiredFields = Boolean(
         this.login.email && this.login.password
@@ -139,6 +156,9 @@ export default defineComponent({
         this.submitted = true;
       }
     },
+  },
+  components: {
+    CreateUser,
   },
 });
 </script>

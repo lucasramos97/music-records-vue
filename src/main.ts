@@ -12,6 +12,7 @@ import Toast from 'primevue/toast';
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
 import Button from 'primevue/button';
+import Dialog from 'primevue/dialog';
 
 import router from './router';
 import App from './App.vue';
@@ -26,5 +27,6 @@ app.component('Toast', Toast);
 app.component('InputText', InputText);
 app.component('Password', Password);
 app.component('Button', Button);
+app.component('Dialog', Dialog);
 
 app.mount('#app');
