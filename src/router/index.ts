@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
 import Login from '@/components/users/Login.vue';
 import MusicList from '@/components/musics/MusicList.vue';
+import DeletedMusicList from '@/components/musics/DeletedMusicList.vue';
 import AuthenticationService from '@/services/AuthenticationService';
 
 const routes: Array<RouteRecordRaw> = [
@@ -12,6 +13,10 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/musics',
     component: MusicList,
+  },
+  {
+    path: '/musics/deleted',
+    component: DeletedMusicList,
   },
   {
     path: '/login',
