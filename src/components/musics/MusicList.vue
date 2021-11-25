@@ -9,6 +9,14 @@
       class="p-button-primary"
       icon="pi pi-plus"
     />
+
+    <Button
+      label="Deleted Music List"
+      :badge="countDeletedMusics.toString()"
+      badgeClass="p-badge-danger"
+      class="p-button-primary"
+      icon="pi pi-trash"
+    />
   </div>
   <DataTable
     :value="musics"
@@ -109,6 +117,7 @@ export default defineComponent({
   },
   data() {
     return {
+      countDeletedMusics: 0,
       loading: false,
       musics: [] as IMusic[],
       totalRecords: 0,
@@ -124,6 +133,7 @@ export default defineComponent({
       page: 0,
       rows: 5,
     };
+    this.loadCountDeletedMusics();
     this.loadMusics();
   },
   methods: {
@@ -131,6 +141,22 @@ export default defineComponent({
       this.titleMusicDialog = 'Add Music';
       this.music = MusicFactory.createDefaultMusic();
       this.visibleMusicDialog = true;
+    },
+
+    loadCountDeletedMusics() {
+      musicService
+        .countDeleted()
+        .then((res) => {
+          this.countDeletedMusics = res.data;
+        })
+        .catch((err: AxiosError) => {
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: err.response?.data.message,
+            life: 3000,
+          });
+        });
     },
 
     loadMusics() {
