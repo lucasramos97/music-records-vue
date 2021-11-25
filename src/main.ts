@@ -15,6 +15,9 @@ import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import InputMask from 'primevue/inputmask';
+import InputNumber from 'primevue/inputnumber';
+import RadioButton from 'primevue/radiobutton';
 
 import router from './router';
 import App from './App.vue';
@@ -32,5 +35,8 @@ app.component('Button', Button);
 app.component('Dialog', Dialog);
 app.component('DataTable', DataTable);
 app.component('Column', Column);
+app.component('InputMask', InputMask);
+app.component('InputNumber', InputNumber);
+app.component('RadioButton', RadioButton);
 
 app.mount('#app');

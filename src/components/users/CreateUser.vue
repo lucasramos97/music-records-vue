@@ -2,9 +2,9 @@
   <Dialog
     header="Create User"
     v-model:visible="visible"
-    :style="{ width: '450px' }"
     :modal="true"
     @hide="onHide()"
+    :style="{ width: '450px' }"
   >
     <div class="p-fluid p-formgrid p-grid">
       <div class="p-field p-col-12">
@@ -88,7 +88,10 @@ const userService = new UserService();
 
 export default defineComponent({
   props: {
-    visible: Boolean,
+    visible: {
+      type: Boolean,
+      required: true,
+    },
   },
   emits: ['update:visible'],
   setup(props, { emit }) {
@@ -128,6 +131,7 @@ export default defineComponent({
       const allRequiredFields = Boolean(
         this.user.username && this.user.email && this.user.password
       );
+
       if (!allRequiredFields) {
         return false;
       }

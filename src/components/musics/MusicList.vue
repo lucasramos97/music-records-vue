@@ -2,6 +2,14 @@
   <Toast />
   <LoggedUser />
   <h1>Music List</h1>
+  <div class="table-top-buttons">
+    <Button
+      label="Add"
+      @click="openAdd()"
+      class="p-button-primary"
+      icon="pi pi-plus"
+    />
+  </div>
   <DataTable
     :value="musics"
     :lazy="true"
@@ -38,13 +46,20 @@
     </Column>
     <template #empty> No musics found. </template>
   </DataTable>
+
+  <MusicDialog
+    :title="titleMusicDialog"
+    :onSuccess="loadMusics"
+    v-model:visible="visibleMusicDialog"
+  />
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { AxiosError } from 'axios';
 
 import LoggedUser from '@/components/utils/LoggedUser.vue';
+import MusicDialog from './MusicDialog.vue';
 
 import { ILazyParams, IMusic } from '@/interfaces/all';
 import MusicService from '@/services/MusicService';
@@ -54,12 +69,20 @@ import StringUtils from '@/utils/StringUtils';
 const musicService = new MusicService();
 
 export default defineComponent({
+  setup() {
+    let visibleMusicDialog = ref(false);
+
+    return {
+      visibleMusicDialog,
+    };
+  },
   data() {
     return {
       loading: false,
-      totalRecords: 0,
       musics: [] as IMusic[],
+      totalRecords: 0,
       lazyParams: {} as ILazyParams,
+      titleMusicDialog: '',
     };
   },
   mounted() {
@@ -71,6 +94,11 @@ export default defineComponent({
     this.loadMusics();
   },
   methods: {
+    openAdd() {
+      this.titleMusicDialog = 'Add Music';
+      this.visibleMusicDialog = true;
+    },
+
     loadMusics() {
       this.loading = true;
       setTimeout(() => {
@@ -115,6 +143,7 @@ export default defineComponent({
   },
   components: {
     LoggedUser,
+    MusicDialog,
   },
 });
 </script>
