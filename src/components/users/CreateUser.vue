@@ -84,8 +84,6 @@ import UserService from '@/services/UserService';
 import StringUtils from '@/utils/StringUtils';
 import Messages from '@/utils/Messages';
 
-const userService = new UserService();
-
 export default defineComponent({
   props: {
     visible: {
@@ -95,12 +93,14 @@ export default defineComponent({
   },
   emits: ['update:visible'],
   setup(props, { emit }) {
+    let userService = new UserService();
     let visible = computed({
       get: () => props.visible,
       set: (value) => emit('update:visible', value),
     });
 
     return {
+      userService,
       visible,
     };
   },
@@ -153,7 +153,7 @@ export default defineComponent({
     actionCreateUser() {
       if (this.validUser()) {
         this.spinLoader = true;
-        userService
+        this.userService
           .create(this.user)
           .then(() => {
             this.$toast.add({
@@ -165,18 +165,17 @@ export default defineComponent({
             this.onHide();
           })
           .catch((err: AxiosError) =>
-            this.$toast
-              .add({
-                severity: 'error',
-                summary: 'Error',
-                detail: err.response?.data.message,
-                life: 3000,
-              })
-              .finally(() => {
-                this.submitted = false;
-                this.spinLoader = false;
-              })
-          );
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: err.response?.data.message,
+              life: 3000,
+            })
+          )
+          .finally(() => {
+            this.submitted = false;
+            this.spinLoader = false;
+          });
       } else {
         this.submitted = true;
       }

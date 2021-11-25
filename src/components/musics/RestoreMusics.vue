@@ -41,8 +41,6 @@ import { IMusic } from '@/interfaces/all';
 import MusicService from '@/services/MusicService';
 import Messages from '@/utils/Messages';
 
-const musicService = new MusicService();
-
 export default defineComponent({
   props: {
     musicsProp: {
@@ -60,12 +58,14 @@ export default defineComponent({
   },
   emits: ['update:visible'],
   setup(props, { emit }) {
+    let musicService = new MusicService();
     let visible = computed({
       get: () => props.visible,
       set: (value) => emit('update:visible', value),
     });
 
     return {
+      musicService,
       visible,
     };
   },
@@ -82,7 +82,7 @@ export default defineComponent({
 
     actionRestoreMusics() {
       this.spinLoader = true;
-      musicService
+      this.musicService
         .restoreMusics(this.musics)
         .then((res) => {
           this.$toast.add({

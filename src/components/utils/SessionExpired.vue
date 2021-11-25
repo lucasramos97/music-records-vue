@@ -1,23 +1,16 @@
 <template>
   <Dialog
-    header="Logout"
+    header="Session Expired"
     v-model:visible="visible"
     :modal="true"
+    @show="onShow()"
+    @hide="onHide()"
     :style="{ width: '500px' }"
   >
     <div class="p-fluid p-formgrid p-grid">
       <div class="p-field p-col-12">
-        <i class="pi pi-exclamation-triangle p-mr-3"></i>
-        <span>Are you sure you want to log out?</span>
-      </div>
-
-      <div class="p-field p-col-12 p-md-3">
-        <Button
-          label="Yes"
-          @click="actionLogout()"
-          class="p-button-primary"
-          icon="pi pi-check"
-        />
+        <i class="pi pi-info-circle p-mr-3"></i>
+        <span>Your session has expired, login again!</span>
       </div>
     </div>
   </Dialog>
@@ -49,8 +42,11 @@ export default defineComponent({
     };
   },
   methods: {
-    actionLogout() {
+    onShow() {
       this.authenticationService.logout();
+    },
+
+    onHide() {
       this.$emit('update:visible', false);
       this.$router.push('/login');
     },

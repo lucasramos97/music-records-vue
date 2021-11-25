@@ -85,14 +85,15 @@ import UserService from '@/services/UserService';
 import Messages from '@/utils/Messages';
 import StringUtils from '@/utils/StringUtils';
 
-const authenticationService = new AuthenticationService();
-const userService = new UserService();
-
 export default defineComponent({
   setup() {
+    let authenticationService = new AuthenticationService();
+    let userService = new UserService();
     let visibleCreateUser = ref(false);
 
     return {
+      authenticationService,
+      userService,
       visibleCreateUser,
     };
   },
@@ -136,10 +137,10 @@ export default defineComponent({
     actionLogin() {
       if (this.validLogin()) {
         this.spinLoader = true;
-        userService
+        this.userService
           .login(this.login)
           .then((res) => {
-            authenticationService.setUser(res.data);
+            this.authenticationService.setUser(res.data);
             this.$router.push('/musics');
           })
           .catch((err: AxiosError) => {

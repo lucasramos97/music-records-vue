@@ -89,6 +89,8 @@
   />
 
   <EmptyList :onSuccess="reloadMusics" v-model:visible="visibleEmptyList" />
+
+  <SessionExpired v-model:visible="visibleSessionExpired" />
 </template>
 
 <script lang="ts">
@@ -96,6 +98,7 @@ import { defineComponent, ref } from 'vue';
 import { AxiosError } from 'axios';
 
 import LoggedUser from '@/components/utils/LoggedUser.vue';
+import SessionExpired from '@/components/utils/SessionExpired.vue';
 import RestoreMusics from './RestoreMusics.vue';
 import EmptyList from './EmptyList.vue';
 import DefinitiveDeleteMusic from './DefinitiveDeleteMusic.vue';
@@ -106,18 +109,20 @@ import NumberUtils from '@/utils/NumberUtils';
 import StringUtils from '@/utils/StringUtils';
 import MusicFactory from '@/utils/MusicFactory';
 
-const musicService = new MusicService();
-
 export default defineComponent({
   setup() {
+    let musicService = new MusicService();
     let visibleRestore = ref(false);
     let visibleDefinitiveDelete = ref(false);
     let visibleEmptyList = ref(false);
+    let visibleSessionExpired = ref(false);
 
     return {
+      musicService,
       visibleRestore,
       visibleDefinitiveDelete,
       visibleEmptyList,
+      visibleSessionExpired,
     };
   },
   data() {
@@ -156,24 +161,33 @@ export default defineComponent({
       this.$router.push('/musics');
     },
 
+    errorHandler(err: AxiosError) {
+      if (err.response?.status === 401) {
+        this.visibleSessionExpired = true;
+        return;
+      }
+
+      if (!this.visibleSessionExpired) {
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: err.response?.data.message,
+          life: 3000,
+        });
+      }
+    },
+
     loadMusics() {
       this.loading = true;
       setTimeout(() => {
-        musicService
+        this.musicService
           .getAllDeleted(this.lazyParams.page + 1, this.lazyParams.rows)
           .then((res) => {
             this.musics = res.data.content;
             this.totalRecords = res.data.total;
             this.loading = false;
           })
-          .catch((err: AxiosError) => {
-            this.$toast.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: err.response?.data.message,
-              life: 3000,
-            });
-          });
+          .catch((err: AxiosError) => this.errorHandler(err));
       }, 1000);
     },
 
@@ -208,6 +222,7 @@ export default defineComponent({
     RestoreMusics,
     EmptyList,
     DefinitiveDeleteMusic,
+    SessionExpired,
   },
 });
 </script>

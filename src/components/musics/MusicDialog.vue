@@ -131,8 +131,6 @@ import MusicFactory from '@/utils/MusicFactory';
 import DateUtils from '@/utils/DateUtils';
 import Messages from '@/utils/Messages';
 
-const musicService = new MusicService();
-
 export default defineComponent({
   props: {
     title: {
@@ -154,12 +152,14 @@ export default defineComponent({
   },
   emits: ['update:visible'],
   setup(props, { emit }) {
+    let musicService = new MusicService();
     let visible = computed({
       get: () => props.visible,
       set: (value) => emit('update:visible', value),
     });
 
     return {
+      musicService,
       visible,
     };
   },
@@ -233,7 +233,7 @@ export default defineComponent({
 
     saveMusic() {
       const submittedMusic = MusicFactory.createSubmittedMusic(this.music);
-      musicService
+      this.musicService
         .save(submittedMusic)
         .then(() => {
           this.$toast.add({
@@ -261,7 +261,7 @@ export default defineComponent({
 
     editMusic() {
       const submittedMusic = MusicFactory.createSubmittedMusic(this.music);
-      musicService
+      this.musicService
         .update(submittedMusic)
         .then(() => {
           this.$toast.add({

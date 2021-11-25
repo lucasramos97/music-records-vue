@@ -10,9 +10,14 @@ import { defineComponent } from 'vue';
 
 import AuthenticationService from '@/services/AuthenticationService';
 
-const authenticationService = new AuthenticationService();
-
 export default defineComponent({
+  setup() {
+    let authenticationService = new AuthenticationService();
+
+    return {
+      authenticationService,
+    };
+  },
   data() {
     return {
       username: '' as string | null,
@@ -20,8 +25,8 @@ export default defineComponent({
     };
   },
   mounted() {
-    this.username = authenticationService.getUsername();
-    this.email = authenticationService.getEmail();
+    this.username = this.authenticationService.getUsername();
+    this.email = this.authenticationService.getEmail();
   },
 });
 </script>

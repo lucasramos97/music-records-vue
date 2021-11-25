@@ -99,6 +99,8 @@
   />
 
   <LogoutDialog v-model:visible="visibleLogoutDialog" />
+
+  <SessionExpired v-model:visible="visibleSessionExpired" />
 </template>
 
 <script lang="ts">
@@ -107,6 +109,7 @@ import { AxiosError } from 'axios';
 
 import LoggedUser from '@/components/utils/LoggedUser.vue';
 import LogoutDialog from '@/components/utils/LogoutDialog.vue';
+import SessionExpired from '@/components/utils/SessionExpired.vue';
 import MusicDialog from './MusicDialog.vue';
 import DeleteMusic from './DeleteMusic.vue';
 
@@ -116,18 +119,20 @@ import MusicFactory from '@/utils/MusicFactory';
 import NumberUtils from '@/utils/NumberUtils';
 import StringUtils from '@/utils/StringUtils';
 
-const musicService = new MusicService();
-
 export default defineComponent({
   setup() {
+    let musicService = new MusicService();
     let visibleMusicDialog = ref(false);
     let visibleDeleteMusic = ref(false);
     let visibleLogoutDialog = ref(false);
+    let visibleSessionExpired = ref(false);
 
     return {
+      musicService,
       visibleMusicDialog,
       visibleDeleteMusic,
       visibleLogoutDialog,
+      visibleSessionExpired,
     };
   },
   data() {
@@ -158,20 +163,29 @@ export default defineComponent({
       this.visibleMusicDialog = true;
     },
 
+    errorHandler(err: AxiosError) {
+      if (err.response?.status === 401) {
+        this.visibleSessionExpired = true;
+        return;
+      }
+
+      if (!this.visibleSessionExpired) {
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: err.response?.data.message,
+          life: 3000,
+        });
+      }
+    },
+
     loadCountDeletedMusics() {
-      musicService
+      this.musicService
         .countDeleted()
         .then((res) => {
           this.countDeletedMusics = res.data;
         })
-        .catch((err: AxiosError) => {
-          this.$toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: err.response?.data.message,
-            life: 3000,
-          });
-        });
+        .catch((err: AxiosError) => this.errorHandler(err));
     },
 
     goToDeletedMusicList() {
@@ -185,21 +199,14 @@ export default defineComponent({
     loadMusics() {
       this.loading = true;
       setTimeout(() => {
-        musicService
+        this.musicService
           .getAll(this.lazyParams.page + 1, this.lazyParams.rows)
           .then((res) => {
             this.musics = res.data.content;
             this.totalRecords = res.data.total;
             this.loading = false;
           })
-          .catch((err: AxiosError) => {
-            this.$toast.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: err.response?.data.message,
-              life: 3000,
-            });
-          });
+          .catch((err: AxiosError) => this.errorHandler(err));
       }, 1000);
     },
 
@@ -245,6 +252,7 @@ export default defineComponent({
     LogoutDialog,
     MusicDialog,
     DeleteMusic,
+    SessionExpired,
   },
 });
 </script>

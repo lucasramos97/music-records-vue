@@ -36,8 +36,6 @@ import { AxiosError } from 'axios';
 import MusicService from '@/services/MusicService';
 import Messages from '@/utils/Messages';
 
-const musicService = new MusicService();
-
 export default defineComponent({
   props: {
     visible: {
@@ -51,12 +49,14 @@ export default defineComponent({
   },
   emits: ['update:visible'],
   setup(props, { emit }) {
+    let musicService = new MusicService();
     let visible = computed({
       get: () => props.visible,
       set: (value) => emit('update:visible', value),
     });
 
     return {
+      musicService,
       visible,
     };
   },
@@ -68,7 +68,7 @@ export default defineComponent({
   methods: {
     actionEmptyList() {
       this.spinLoader = true;
-      musicService
+      this.musicService
         .emptyList()
         .then((res) => {
           this.$toast.add({
