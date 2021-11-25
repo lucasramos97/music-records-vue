@@ -11,6 +11,7 @@
     />
 
     <Button
+      v-if="countDeletedMusics > 0"
       label="Deleted Music List"
       @click="goToDeletedMusicList()"
       :badge="countDeletedMusics.toString()"

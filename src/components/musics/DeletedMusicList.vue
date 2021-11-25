@@ -12,6 +12,14 @@
     />
 
     <Button
+      label="Empty List"
+      @click="openEmptyList()"
+      :disabled="musics.length === 0"
+      class="p-button-danger"
+      icon="pi pi-ban"
+    />
+
+    <Button
       label="Music List"
       @click="goToMusicList()"
       class="p-button-primary"
@@ -79,6 +87,8 @@
     :onSuccess="reloadMusics"
     v-model:visible="visibleDefinitiveDelete"
   />
+
+  <EmptyList :onSuccess="reloadMusics" v-model:visible="visibleEmptyList" />
 </template>
 
 <script lang="ts">
@@ -87,6 +97,7 @@ import { AxiosError } from 'axios';
 
 import LoggedUser from '@/components/utils/LoggedUser.vue';
 import RestoreMusics from './RestoreMusics.vue';
+import EmptyList from './EmptyList.vue';
 import DefinitiveDeleteMusic from './DefinitiveDeleteMusic.vue';
 
 import { ILazyParams, IMusic } from '@/interfaces/all';
@@ -101,10 +112,12 @@ export default defineComponent({
   setup() {
     let visibleRestore = ref(false);
     let visibleDefinitiveDelete = ref(false);
+    let visibleEmptyList = ref(false);
 
     return {
       visibleRestore,
       visibleDefinitiveDelete,
+      visibleEmptyList,
     };
   },
   data() {
@@ -135,9 +148,8 @@ export default defineComponent({
       this.loadMusics();
     },
 
-    openDefinitiveDelete(music: IMusic) {
-      this.musicToDelete = music;
-      this.visibleDefinitiveDelete = true;
+    openEmptyList() {
+      this.visibleEmptyList = true;
     },
 
     goToMusicList() {
@@ -185,10 +197,16 @@ export default defineComponent({
     formatFeat(feat: boolean): string {
       return feat ? 'Yes' : 'No';
     },
+
+    openDefinitiveDelete(music: IMusic) {
+      this.musicToDelete = music;
+      this.visibleDefinitiveDelete = true;
+    },
   },
   components: {
     LoggedUser,
     RestoreMusics,
+    EmptyList,
     DefinitiveDeleteMusic,
   },
 });
