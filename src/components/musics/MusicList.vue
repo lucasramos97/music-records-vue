@@ -73,7 +73,7 @@
         />
       </template>
     </Column>
-    <template #empty> No musics found. </template>
+    <template #empty>No musics found.</template>
   </DataTable>
 
   <MusicDialog

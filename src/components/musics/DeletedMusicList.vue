@@ -32,7 +32,7 @@
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} musics"
     responsiveLayout="scroll"
   >
-    <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
+    <Column selectionMode="multiple" headerStyle="width: 3em" />
     <Column field="title" header="Title" />
     <Column field="artist" header="Artist" />
     <Column field="release_date" header="Release Date">
@@ -55,13 +55,29 @@
         {{ formatFeat(slotProps.data.feat) }}
       </template>
     </Column>
-    <template #empty> No musics found. </template>
+    <Column header="Delete" :exportable="false">
+      <template #body="slotProps">
+        <Button
+          @click="openDefinitiveDelete(slotProps.data)"
+          v-tooltip.left="'Definitive Delete Music'"
+          class="p-button-rounded p-button-danger"
+          icon="pi pi-trash"
+        />
+      </template>
+    </Column>
+    <template #empty>No musics found.</template>
   </DataTable>
 
   <RestoreMusics
     :musicsProp="selectedMusics"
     :onSuccess="reloadMusics"
     v-model:visible="visibleRestore"
+  />
+
+  <DefinitiveDeleteMusic
+    :musicProp="musicToDelete"
+    :onSuccess="reloadMusics"
+    v-model:visible="visibleDefinitiveDelete"
   />
 </template>
 
@@ -71,20 +87,24 @@ import { AxiosError } from 'axios';
 
 import LoggedUser from '@/components/utils/LoggedUser.vue';
 import RestoreMusics from './RestoreMusics.vue';
+import DefinitiveDeleteMusic from './DefinitiveDeleteMusic.vue';
 
 import { ILazyParams, IMusic } from '@/interfaces/all';
 import MusicService from '@/services/MusicService';
 import NumberUtils from '@/utils/NumberUtils';
 import StringUtils from '@/utils/StringUtils';
+import MusicFactory from '@/utils/MusicFactory';
 
 const musicService = new MusicService();
 
 export default defineComponent({
   setup() {
     let visibleRestore = ref(false);
+    let visibleDefinitiveDelete = ref(false);
 
     return {
       visibleRestore,
+      visibleDefinitiveDelete,
     };
   },
   data() {
@@ -94,6 +114,7 @@ export default defineComponent({
       totalRecords: 0,
       lazyParams: {} as ILazyParams,
       selectedMusics: [] as IMusic[],
+      musicToDelete: MusicFactory.createDefaultMusic(),
     };
   },
   mounted() {
@@ -112,6 +133,11 @@ export default defineComponent({
     reloadMusics() {
       this.selectedMusics = [];
       this.loadMusics();
+    },
+
+    openDefinitiveDelete(music: IMusic) {
+      this.musicToDelete = music;
+      this.visibleDefinitiveDelete = true;
     },
 
     goToMusicList() {
@@ -163,6 +189,7 @@ export default defineComponent({
   components: {
     LoggedUser,
     RestoreMusics,
+    DefinitiveDeleteMusic,
   },
 });
 </script>
