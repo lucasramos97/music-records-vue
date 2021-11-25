@@ -44,11 +44,22 @@
         {{ formatFeat(slotProps.data.feat) }}
       </template>
     </Column>
+    <Column header="Edit" :exportable="false">
+      <template #body="slotProps">
+        <Button
+          @click="openEdit(slotProps.data)"
+          v-tooltip.left="'Edit Music'"
+          class="p-button-rounded p-button-primary"
+          icon="pi pi-pencil"
+        />
+      </template>
+    </Column>
     <template #empty> No musics found. </template>
   </DataTable>
 
   <MusicDialog
     :title="titleMusicDialog"
+    :musicProp="music"
     :onSuccess="loadMusics"
     v-model:visible="visibleMusicDialog"
   />
@@ -63,6 +74,7 @@ import MusicDialog from './MusicDialog.vue';
 
 import { ILazyParams, IMusic } from '@/interfaces/all';
 import MusicService from '@/services/MusicService';
+import MusicFactory from '@/utils/MusicFactory';
 import NumberUtils from '@/utils/NumberUtils';
 import StringUtils from '@/utils/StringUtils';
 
@@ -83,6 +95,7 @@ export default defineComponent({
       totalRecords: 0,
       lazyParams: {} as ILazyParams,
       titleMusicDialog: '',
+      music: MusicFactory.createDefaultMusic(),
     };
   },
   mounted() {
@@ -96,6 +109,7 @@ export default defineComponent({
   methods: {
     openAdd() {
       this.titleMusicDialog = 'Add Music';
+      this.music = MusicFactory.createDefaultMusic();
       this.visibleMusicDialog = true;
     },
 
@@ -139,6 +153,12 @@ export default defineComponent({
 
     formatFeat(feat: boolean): string {
       return feat ? 'Yes' : 'No';
+    },
+
+    openEdit(music: IMusic) {
+      this.titleMusicDialog = 'Edit Music';
+      this.music = MusicFactory.createEditMusic(music);
+      this.visibleMusicDialog = true;
     },
   },
   components: {

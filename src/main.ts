@@ -19,6 +19,8 @@ import InputMask from 'primevue/inputmask';
 import InputNumber from 'primevue/inputnumber';
 import RadioButton from 'primevue/radiobutton';
 
+import Tooltip from 'primevue/tooltip';
+
 import router from './router';
 import App from './App.vue';
 
@@ -38,5 +40,7 @@ app.component('Column', Column);
 app.component('InputMask', InputMask);
 app.component('InputNumber', InputNumber);
 app.component('RadioButton', RadioButton);
+
+app.directive('tooltip', Tooltip);
 
 app.mount('#app');

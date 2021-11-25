@@ -4,6 +4,7 @@
     :header="title"
     v-model:visible="visible"
     :modal="true"
+    @show="onShow()"
     @hide="onHide()"
     :style="{ width: '500px' }"
   >
@@ -124,6 +125,7 @@
 import { computed, defineComponent } from 'vue';
 import { AxiosError } from 'axios';
 
+import { IMusic } from '@/interfaces/all';
 import MusicService from '@/services/MusicService';
 import MusicFactory from '@/utils/MusicFactory';
 import DateUtils from '@/utils/DateUtils';
@@ -135,6 +137,10 @@ export default defineComponent({
   props: {
     title: {
       type: String,
+      required: true,
+    },
+    musicProp: {
+      type: Object,
       required: true,
     },
     visible: {
@@ -165,8 +171,11 @@ export default defineComponent({
     };
   },
   methods: {
+    onShow() {
+      this.music = this.musicProp as IMusic;
+    },
+
     onHide() {
-      this.music = MusicFactory.createDefaultMusic();
       this.submitted = false;
       this.spinLoader = false;
       this.$emit('update:visible', false);
@@ -222,34 +231,69 @@ export default defineComponent({
       return true;
     },
 
+    saveMusic() {
+      const submittedMusic = MusicFactory.createSubmittedMusic(this.music);
+      musicService
+        .save(submittedMusic)
+        .then(() => {
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Successfully',
+            detail: Messages.MUSIC_SUCCESSFULLY_ADDED,
+            life: 3000,
+          });
+          this.music = MusicFactory.createDefaultMusic();
+          this.onSuccess();
+        })
+        .catch((err: AxiosError) =>
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: err.response?.data.message,
+            life: 3000,
+          })
+        )
+        .finally(() => {
+          this.submitted = false;
+          this.spinLoader = false;
+        });
+    },
+
+    editMusic() {
+      const submittedMusic = MusicFactory.createSubmittedMusic(this.music);
+      musicService
+        .update(submittedMusic)
+        .then(() => {
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Successfully',
+            detail: Messages.MUSIC_SUCCESSFULLY_EDITED,
+            life: 3000,
+          });
+          this.onSuccess();
+        })
+        .catch((err: AxiosError) =>
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: err.response?.data.message,
+            life: 3000,
+          })
+        )
+        .finally(() => {
+          this.submitted = false;
+          this.spinLoader = false;
+        });
+    },
+
     actionSave() {
       if (this.validMusic()) {
         this.spinLoader = true;
-        const submittedMusic = MusicFactory.createSubmittedMusic(this.music);
-        musicService
-          .save(submittedMusic)
-          .then(() => {
-            this.$toast.add({
-              severity: 'success',
-              summary: 'Successfully',
-              detail: Messages.MUSIC_SUCCESSFULLY_ADDED,
-              life: 3000,
-            });
-            this.music = MusicFactory.createDefaultMusic();
-            this.onSuccess();
-          })
-          .catch((err: AxiosError) =>
-            this.$toast.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: err.response?.data.message,
-              life: 3000,
-            })
-          )
-          .finally(() => {
-            this.submitted = false;
-            this.spinLoader = false;
-          });
+        if (this.music.id) {
+          this.editMusic();
+        } else {
+          this.saveMusic();
+        }
       } else {
         this.submitted = true;
       }
