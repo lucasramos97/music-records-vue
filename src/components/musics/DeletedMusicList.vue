@@ -4,6 +4,14 @@
   <h1>Deleted Music List</h1>
   <div class="table-top-buttons">
     <Button
+      label="Restore"
+      @click="openRestore()"
+      :disabled="selectedMusics.length === 0"
+      class="p-button-primary"
+      icon="pi pi-refresh"
+    />
+
+    <Button
       label="Music List"
       @click="goToMusicList()"
       class="p-button-primary"
@@ -12,6 +20,8 @@
   </div>
   <DataTable
     :value="musics"
+    v-model:selection="selectedMusics"
+    dataKey="id"
     :lazy="true"
     :paginator="true"
     :rows="lazyParams.rows"
@@ -22,6 +32,7 @@
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} musics"
     responsiveLayout="scroll"
   >
+    <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
     <Column field="title" header="Title" />
     <Column field="artist" header="Artist" />
     <Column field="release_date" header="Release Date">
@@ -46,13 +57,20 @@
     </Column>
     <template #empty> No musics found. </template>
   </DataTable>
+
+  <RestoreMusics
+    :musicsProp="selectedMusics"
+    :onSuccess="reloadMusics"
+    v-model:visible="visibleRestore"
+  />
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { AxiosError } from 'axios';
 
 import LoggedUser from '@/components/utils/LoggedUser.vue';
+import RestoreMusics from './RestoreMusics.vue';
 
 import { ILazyParams, IMusic } from '@/interfaces/all';
 import MusicService from '@/services/MusicService';
@@ -62,12 +80,20 @@ import StringUtils from '@/utils/StringUtils';
 const musicService = new MusicService();
 
 export default defineComponent({
+  setup() {
+    let visibleRestore = ref(false);
+
+    return {
+      visibleRestore,
+    };
+  },
   data() {
     return {
       loading: false,
       musics: [] as IMusic[],
       totalRecords: 0,
       lazyParams: {} as ILazyParams,
+      selectedMusics: [] as IMusic[],
     };
   },
   mounted() {
@@ -79,6 +105,15 @@ export default defineComponent({
     this.loadMusics();
   },
   methods: {
+    openRestore() {
+      this.visibleRestore = true;
+    },
+
+    reloadMusics() {
+      this.selectedMusics = [];
+      this.loadMusics();
+    },
+
     goToMusicList() {
       this.$router.push('/musics');
     },
@@ -127,6 +162,7 @@ export default defineComponent({
   },
   components: {
     LoggedUser,
+    RestoreMusics,
   },
 });
 </script>
