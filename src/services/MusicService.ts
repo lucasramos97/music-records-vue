@@ -36,4 +36,11 @@ export default class MusicService {
       this.HTTP_OPTIONS
     );
   }
+
+  public delete(musicId: number | undefined): Promise<AxiosResponse<IMusic>> {
+    return axios.delete<AxiosResponse<IMusic>, any>(
+      `${this.URL}/${musicId}`,
+      this.HTTP_OPTIONS
+    );
+  }
 }

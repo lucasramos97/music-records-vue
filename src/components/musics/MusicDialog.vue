@@ -122,7 +122,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, PropType } from 'vue';
 import { AxiosError } from 'axios';
 
 import { IMusic } from '@/interfaces/all';
@@ -140,7 +140,7 @@ export default defineComponent({
       required: true,
     },
     musicProp: {
-      type: Object,
+      type: Object as PropType<IMusic>,
       required: true,
     },
     visible: {
@@ -172,7 +172,7 @@ export default defineComponent({
   },
   methods: {
     onShow() {
-      this.music = this.musicProp as IMusic;
+      this.music = this.musicProp;
     },
 
     onHide() {

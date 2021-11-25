@@ -54,6 +54,16 @@
         />
       </template>
     </Column>
+    <Column header="Delete" :exportable="false">
+      <template #body="slotProps">
+        <Button
+          @click="openDelete(slotProps.data)"
+          v-tooltip.left="'Delete Music'"
+          class="p-button-rounded p-button-danger"
+          icon="pi pi-trash"
+        />
+      </template>
+    </Column>
     <template #empty> No musics found. </template>
   </DataTable>
 
@@ -63,6 +73,12 @@
     :onSuccess="loadMusics"
     v-model:visible="visibleMusicDialog"
   />
+
+  <DeleteMusic
+    :musicProp="musicToDelete"
+    :onSuccess="loadMusics"
+    v-model:visible="visibleDeleteMusic"
+  />
 </template>
 
 <script lang="ts">
@@ -71,6 +87,7 @@ import { AxiosError } from 'axios';
 
 import LoggedUser from '@/components/utils/LoggedUser.vue';
 import MusicDialog from './MusicDialog.vue';
+import DeleteMusic from './DeleteMusic.vue';
 
 import { ILazyParams, IMusic } from '@/interfaces/all';
 import MusicService from '@/services/MusicService';
@@ -83,9 +100,11 @@ const musicService = new MusicService();
 export default defineComponent({
   setup() {
     let visibleMusicDialog = ref(false);
+    let visibleDeleteMusic = ref(false);
 
     return {
       visibleMusicDialog,
+      visibleDeleteMusic,
     };
   },
   data() {
@@ -96,6 +115,7 @@ export default defineComponent({
       lazyParams: {} as ILazyParams,
       titleMusicDialog: '',
       music: MusicFactory.createDefaultMusic(),
+      musicToDelete: MusicFactory.createDefaultMusic(),
     };
   },
   mounted() {
@@ -160,10 +180,16 @@ export default defineComponent({
       this.music = MusicFactory.createEditMusic(music);
       this.visibleMusicDialog = true;
     },
+
+    openDelete(music: IMusic) {
+      this.musicToDelete = music;
+      this.visibleDeleteMusic = true;
+    },
   },
   components: {
     LoggedUser,
     MusicDialog,
+    DeleteMusic,
   },
 });
 </script>
