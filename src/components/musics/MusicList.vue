@@ -19,6 +19,14 @@
       class="p-button-primary"
       icon="pi pi-trash"
     />
+
+    <Button
+      label="Logout"
+      @click="openLogout()"
+      class="p-button-primary"
+      icon="pi pi-sign-out"
+      iconPos="right"
+    />
   </div>
   <DataTable
     :value="musics"
@@ -89,6 +97,8 @@
     :onSuccess="onDeleteMusicSuccess"
     v-model:visible="visibleDeleteMusic"
   />
+
+  <LogoutDialog v-model:visible="visibleLogoutDialog" />
 </template>
 
 <script lang="ts">
@@ -96,6 +106,7 @@ import { defineComponent, ref } from 'vue';
 import { AxiosError } from 'axios';
 
 import LoggedUser from '@/components/utils/LoggedUser.vue';
+import LogoutDialog from '@/components/utils/LogoutDialog.vue';
 import MusicDialog from './MusicDialog.vue';
 import DeleteMusic from './DeleteMusic.vue';
 
@@ -111,10 +122,12 @@ export default defineComponent({
   setup() {
     let visibleMusicDialog = ref(false);
     let visibleDeleteMusic = ref(false);
+    let visibleLogoutDialog = ref(false);
 
     return {
       visibleMusicDialog,
       visibleDeleteMusic,
+      visibleLogoutDialog,
     };
   },
   data() {
@@ -163,6 +176,10 @@ export default defineComponent({
 
     goToDeletedMusicList() {
       this.$router.push('/musics/deleted');
+    },
+
+    openLogout() {
+      this.visibleLogoutDialog = true;
     },
 
     loadMusics() {
@@ -225,6 +242,7 @@ export default defineComponent({
   },
   components: {
     LoggedUser,
+    LogoutDialog,
     MusicDialog,
     DeleteMusic,
   },
